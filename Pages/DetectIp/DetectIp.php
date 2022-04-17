@@ -1,5 +1,5 @@
 <?php
-class detectIp{
+class DetectIp{
     function detect_ip() {
         // IP si internet partagé
         if (isset($_SERVER['HTTP_CLIENT_IP'])) {

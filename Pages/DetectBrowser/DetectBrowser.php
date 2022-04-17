@@ -1,5 +1,5 @@
 <?php
-class detectBrowser{
+class DetectBrowser{
     function detect_browser() {
         $user_agent = $_SERVER['HTTP_USER_AGENT'];
         $browser        = "Inconnu";
