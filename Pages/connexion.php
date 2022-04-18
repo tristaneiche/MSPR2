@@ -34,9 +34,12 @@ if(isset($_POST['submit'])){
             $user = $pseudo;
             $password = $_POST['mdp']; 
             $connect = ldap_connect($ldap_host);
-            echo $connect;
             $bind = ldap_bind($connect, $user, $password);
-            echo $bind;
+            if ($bind) {
+                echo "réussi";
+            } else {
+                echo "fail";   
+            }
 
 
             $existence_ft = '';
@@ -65,7 +68,7 @@ if(isset($_POST['submit'])){
         }
         // S'il y a eu moins de 5 identifications ratées dans la journée, on laisse passer
     if($tentatives < 5){
-        $mysqli = mysqli_connect("localhost", "lechatelet", "dove", "users");
+        $mysqli = mysqli_connect("localhost", "lechatelet", "dove", "Users");
         $verifications = mysqli_query($mysqli,'SELECT * FROM user WHERE pseudo = \''.mysqli_real_escape_string($mysqli, $_POST['pseudo']).'\' ');
           $data_verif = mysqli_fetch_assoc($verifications);
             
