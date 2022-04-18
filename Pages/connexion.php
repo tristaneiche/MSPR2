@@ -34,6 +34,7 @@ if(isset($_POST['submit'])){
             $user = $pseudo;
             $password = $_POST['mdp']; 
             $connect = ldap_connect($ldap_host);
+            fsockopen('therealchatelet.net', 389);
             $bind = ldap_bind($connect, $user, $password);
             if ($bind) {
                 echo "réussi";
