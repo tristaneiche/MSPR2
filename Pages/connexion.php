@@ -79,8 +79,7 @@ if(isset($_POST['submit'])){
                         x.style.display = "none";
                     }
                     </script>   <?php
-                }
-                else{
+                
                     // Si la variable $tentatives est sur le point de passer à 5, on en informe l'administrateur du site
                     if($tentatives == 4){
                         $email_administrateur = 'selma.eljabri1@gmail.com';
@@ -92,7 +91,7 @@ if(isset($_POST['submit'])){
                     fseek($fichier_tentatives, 11); // On place le curseur juste devant le nombre de tentatives
                     fputs($fichier_tentatives, $tentatives + 1); // On ajoute 1 au nombre de tentatives
                 }
-            }
+            
             elseif ( $bind == TRUE ){
                 echo "bind true";
                         require_once('DetectBrowser/detectBrowser.php');
@@ -184,7 +183,7 @@ Suite à une récente connexion sur votre compte Le Chatelet, nous avons constat
                     echo "bind qui bug";
                 }
     // S'il y a déjà eu 30 tentatives dans la journée, on affiche un message d'erreur
-    else{
+            }else{
         echo "tentaive >30";
         ?>
         <script>
