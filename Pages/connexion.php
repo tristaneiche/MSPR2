@@ -28,10 +28,10 @@ session_start();
 $session_id = session_id();
 if(isset($_POST['submit'])){
     if(!empty($_POST['pseudo']) AND !empty($_POST['mdp'])){
-            $ldap_host = "therealchatelet.fr";
-            $base_dn = "DC=therealchatelet,DC=fr";
+            $ldap_host = "therealchatelet.net";
+            $base_dn = "DC=therealchatelet,DC=net";
             $pseudo = $_POST['pseudo'];
-            $user = "cn=$pseudo, DC=therealchatelet, DC=fr" ;
+            $user = "cn=$pseudo, DC=therealchatelet, DC=net" ;
             $password = $_POST['mdp']; 
             $connect = ldap_connect($ldap_host);
             $bind = ldap_bind($connect, $user, $password);
