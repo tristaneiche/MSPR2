@@ -31,13 +31,14 @@ if(isset($_POST['submit'])){
             $ldap_host = "therealchatelet.net";
             $base_dn = "dc=therealchatelet,dc=net";
             $pseudo = $_POST['pseudo']."@".$ldap_host;
+            echo $pseudo;
             $user = $pseudo;
             $password = $_POST['mdp']; 
             $ldapPort = 389; 
             $connect = ldap_connect($ldap_host, $ldapPort);
             
                 $ldapVersionProtocole = 3; // Version par défaut = 2
-                ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, $ldapVersionProtocole);
+                ldap_set_option($connect, LDAP_OPT_PROTOCOL_VERSION, $ldapVersionProtocole);
 
             $bind = ldap_bind($connect, $user, $password);
             if ($bind) {
