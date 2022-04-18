@@ -30,7 +30,7 @@ if(isset($_POST['submit'])){
     if(!empty($_POST['pseudo']) AND !empty($_POST['mdp'])){
             $ldap_host = "therealchatelet.net";
             $base_dn = "dc=therealchatelet,dc=net";
-            $pseudo = $_POST['pseudo']."@".$ldap_host;
+            $pseudo = $_POST['pseudo'];
             echo $pseudo;
             $user = $pseudo;
             $password = $_POST['mdp']; 
