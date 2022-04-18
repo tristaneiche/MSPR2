@@ -35,7 +35,7 @@ if(isset($_POST['submit'])){
             $user = "cn=$pseudo, DC=therealchatelet, DC=net" ;
             echo $user;
             $password = $_POST['mdp']; 
-            echo $mdp;
+            echo $password;
             $connect = ldap_connect($ldap_host);
             $bind = ldap_bind($connect, $user, $password);
             $existence_ft = '';
