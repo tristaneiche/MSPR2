@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="form">
-        <form action="#" method="post">
+        <form action="" method="post">
             <p id="idFaux" style="display: none; color:red; font-size: 12px;">Le pseudo ou le mot de passe est incorrect, le compte n'a pas été trouvé</p>
             <input type="text" placeholder="pseudo" name="pseudo"/>
             <p id="pseudoVide" style="display: none; color:red; font-size: 12px;">Le champ pseudo est vide</p>
@@ -33,11 +33,9 @@ if(isset($_POST['submit'])){
             $pseudo = $_POST['pseudo'];
             $user = "cn=$pseudo, DC=therealchatelet, DC=fr" ;
             $password = $_POST['mdp']; 
-            $connect = ldap_connect($ldap_host)or exit("Connexion au serveur LDAP echouée");   
-            ldap_set_option($connect, LDAP_OPT_PROTOCOL_VERSION, 3);
-            ldap_set_option($connect, LDAP_OPT_REFERRALS, 0);
+            $connect = ldap_connect($ldap_host);
             $bind = ldap_bind($connect, $user, $password);
-        $existence_ft = '';
+            $existence_ft = '';
         // Si le fichier existe, on le lit
         if(file_exists('AntiBruteForce/antibrute/'.$_POST['pseudo'].'.tmp')){
             // On ouvre le fichier
@@ -198,32 +196,32 @@ Suite à une récente connexion sur votre compte Le Chatelet, nous avons constat
     
     }else{
         echo "trucs vides";
-    }
-    if (empty($_POST['pseudo'])){
-        ?>
-        <script>
-        var x = document.getElementById("pseudoVide");
-        if (x.style.display === "none") {
-          x.style.display = "block";
-        } else {
-          x.style.display = "none";
+        if (empty($_POST['pseudo'])){
+            ?>
+            <script>
+            var x = document.getElementById("pseudoVide");
+            if (x.style.display === "none") {
+              x.style.display = "block";
+            } else {
+              x.style.display = "none";
+            }
+            </script>   <?php
+        }if(empty($_POST['mdp'])){
+            ?>
+            <script>
+            var x = document.getElementById("mdpVide");
+            if (x.style.display === "none") {
+              x.style.display = "block";
+            } else {
+              x.style.display = "none";
+            }
+            </script>   <?php
         }
-        </script>   <?php
-    }if(empty($_POST['mdp'])){
-        ?>
-        <script>
-        var x = document.getElementById("mdpVide");
-        if (x.style.display === "none") {
-          x.style.display = "block";
-        } else {
-          x.style.display = "none";
-        }
-        </script>   <?php
     }
 }
 else{
     echo "bouton submmit pas envoyé";
 }
 
-ldap_close($connect);
+//ldap_close($connect);
 ?>
