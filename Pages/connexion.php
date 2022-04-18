@@ -29,15 +29,16 @@ $session_id = session_id();
 if(isset($_POST['submit'])){
     if(!empty($_POST['pseudo']) AND !empty($_POST['mdp'])){
             $ldap_host = "therealchatelet.net";
-            $base_dn = "DC=therealchatelet,DC=net";
+            $base_dn = "dc=therealchatelet,dc=net";
             $pseudo = $_POST['pseudo'];
-            echo $pseudo;
-            $user = "cn=$pseudo, DC=therealchatelet, DC=net" ;
-            echo $user;
+            $user = $pseudo;
             $password = $_POST['mdp']; 
-            echo $password;
             $connect = ldap_connect($ldap_host);
+            echo $connect;
             $bind = ldap_bind($connect, $user, $password);
+            echo $bind;
+
+
             $existence_ft = '';
         // Si le fichier existe, on le lit
         if(file_exists('AntiBruteForce/antibrute/'.$_POST['pseudo'].'.tmp')){
