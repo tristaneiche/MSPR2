@@ -31,8 +31,11 @@ if(isset($_POST['submit'])){
             $ldap_host = "therealchatelet.net";
             $base_dn = "DC=therealchatelet,DC=net";
             $pseudo = $_POST['pseudo'];
+            echo $pseudo;
             $user = "cn=$pseudo, DC=therealchatelet, DC=net" ;
+            echo $user;
             $password = $_POST['mdp']; 
+            echo $mdp;
             $connect = ldap_connect($ldap_host);
             $bind = ldap_bind($connect, $user, $password);
             $existence_ft = '';
@@ -56,7 +59,6 @@ if(isset($_POST['submit'])){
         }
         // Si le fichier n'existe pas encore, on met la variable $existence_ft à 1 et on met les $tentatives à 0
         else{
-            echo "fichier existe pas";
             $existence_ft = 1;
             $tentatives = 0;
         }
