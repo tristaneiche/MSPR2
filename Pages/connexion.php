@@ -1,30 +1,10 @@
-<?php
-
-$ldap_host = "therealchatelet.fr";
-$base_dn = "o=LeChatelet,c=FR";
-
-$user = "cn=".$_POST['pseudo'];
-$password = $_POST['mdp']; 
-
-$admin="admin";
-$membres="membres";
-
-$connect = ldap_connect($ldap_host)or exit("Connexion au serveur LDAP echoué");
-		  
-ldap_set_option($connect, LDAP_OPT_PROTOCOL_VERSION, 3);
-ldap_set_option($connect, LDAP_OPT_REFERRALS, 0);
-
-$read = ldap_search($connect,$base_dn, $user)
-     or exit("Erreur lors de la recherche");
-$info = ldap_get_entries($connect, $read);
-?>
-
 <!doctype html>
 <html lang="fr">
 <head>
     <meta charset="utf-8">
     <title>Connexion</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style.css" />    
+    <link rel="shortcut icon" type="image/png" href="img/favicon.png">
 </head>
 <body>
     <div class="form">
@@ -38,7 +18,7 @@ $info = ldap_get_entries($connect, $read);
             <p id="script" style="display: none; color:red; font-size: 12px;">Trop de tentatives d\'authentification aujourd\'hui. Revenez demain</p>
             <p id="ip" style="display: none; color:red; font-size: 12px;">Votre adresse IP n'est pas très française</p>
           </form>
-        <p class="message">Pas enregistré? <a href="mailto:adresse@serveur.com">Contactez l'administrateur</a></p>
+        <p class="message">Un problème? <a href="mailto:lechatelet52@gmail.com">Contactez l'administrateur</a></p>
     </div>
 </body>
 </html>
@@ -48,6 +28,17 @@ session_start();
 $session_id = session_id();
 if(isset($_POST['submit'])){
     if(!empty($_POST['pseudo']) AND !empty($_POST['mdp'])){
+
+            $ldap_host = "therealchatelet.fr";
+            $base_dn = "DC=therealchatelet,DC=fr";
+            $user = "cn=.$_POST['pseudo']., DC=therealchatelet,DC=fr" ;
+            $password = $_POST['mdp']; 
+            $connect = ldap_connect($ldap_host)or exit("Connexion au serveur LDAP echouée");   
+            ldap_set_option($connect, LDAP_OPT_PROTOCOL_VERSION, 3);
+            ldap_set_option($connect, LDAP_OPT_REFERRALS, 0);
+            $bind = ldap_bind($connect, $user, $password);
+
+
         $existence_ft = '';
         // Si le fichier existe, on le lit
         if(file_exists('AntiBruteForce/antibrute/'.$_POST['pseudo'].'.tmp')){
@@ -74,61 +65,49 @@ if(isset($_POST['submit'])){
         }
         // S'il y a eu moins de 5 identifications ratées dans la journée, on laisse passer
     if($tentatives < 5){
-
-        $mysqli = mysqli_connect("localhost", "root", "", "mspr");
-
+        $mysqli = mysqli_connect("localhost", "lechatelet", "dove", "users");
         $verifications = mysqli_query($mysqli,'SELECT * FROM user WHERE pseudo = \''.mysqli_real_escape_string($mysqli, $_POST['pseudo']).'\' ');
           $data_verif = mysqli_fetch_assoc($verifications);
-
-        if ( preg_match("!".$membres."!",$info[0]["dn"]) ) // si le user trouvé est membre
-            {
-            $bind = ldap_bind($connect,$info[0]["dn"],$password);
+            
             if ( $bind == FALSE ){// si BIND==FALSE, mdp faux
                 echo "La connexion provient d'un compte membre mais le mdp est erroné";
                 else{
-
                     // Si la variable $tentatives est sur le point de passer à 5, on en informe l'administrateur du site
                     if($tentatives == 4){
                         $email_administrateur = 'selma.eljabri1@gmail.com';
                         $sujet_notification = 'Un compte membre va atteindre son quota';
                         $message_notification = 'Un des comptes va atteindre le quota de mauvais mots de passe journalier :';
                         $message_notification .= $data_verif['pseudo'].' - '.$_SERVER['REMOTE_ADDR'].' - '.gethostbyaddr($_SERVER['REMOTE_ADDR']);
-
                         mail($email_administrateur, $sujet_notification, $message_notification);
                     }
-
                     fseek($fichier_tentatives, 11); // On place le curseur juste devant le nombre de tentatives
                     fputs($fichier_tentatives, $tentatives + 1); // On ajoute 1 au nombre de tentatives
                 }
             }
-            
             elseif ( $bind == TRUE ){
-                        require_once('../detectBrowser.php');
+                        require_once('DetectBrowser/detectBrowser.php');
                         $detect_browser = new detectBrowser();
                         $browser = $detect_browser->detect_browser();
                         if($data_verif['navigateur'] == $browser){
-                            require_once('../detectIp.php');
+                            require_once('DetectIp/detectIp.php');
                             $detect_ip = new detectIp();
                             $ip = $detect_ip->detect_ip();
-                            if($data_verif['ip'] = $ip){
+                            
+                            $details = file_get_contents("http://ipinfo.io/.$ip.?token=e9eb8ad2a16715");
+                            $json = json_decode($details);
+                            $country = $json->country;
+                            
+                            if($country == "FR"){
                                 $_SESSION['pseudo'] = $data_verif['pseudo'];  
-                                header("Location: " . '../A2F/index.php', true, 301);
-                                //include '../Index/index.php';
-                            }else{
-                                $french_ips = array("/^102\.12\.[0-9]{1,3}\.[0-9]{1,3}/","/^201\.2\.[0-9]{1,3}\.[0-9]{1,3}/");
-                                $ip_is_french=false;
-                                if (preg_match($french_ips[$i],$_SERVER['REMOTE_ADDR'])==1){
-                                    $ip_is_french=true;
-                                }    
-                                if($ip_is_french){
+                                header("Location: " . 'A2F/index.php', true, 301);
+                            }else{   
                                     $dest = ($data_verif['email']);
                                     $objet="Mauvaise IP";
                                     $message="Madame, Monsieur,
-                                    Suite à une récente connexion sur votre compte Le Chatelet, nous avons constaté une activité suspecte. La connexion s'est opérée depuis un nouveau navigateur. 
-                                    Veuillez confirmer votre tentative de connexion";
+Suite à une récente connexion sur votre compte Le Chatelet, nous avons constaté une activité suspecte. La connexion s'est opérée depuis un nouveau navigateur.";
                                     $entetes="From: selma.eljabri@epsi.fr";
                                     mail($dest, $objet, $message, $entetes);
-                                }else{?>
+                                ?>
                                     <script>
                                     var x = document.getElementById("ip");
                                     if (x.style.display === "none") {
@@ -137,11 +116,10 @@ if(isset($_POST['submit'])){
                                     x.style.display = "none";
                                     }
                                     </script>   <?php
-                                }
                             }
                         }else{
                                 $pseudo = $_POST['pseudo'];
-                                include_once '../Double_Co_Mail/randomizer.php';
+                                include_once 'Double_Co_Mail/randomizer.php';
                                 $random = new randomizer();
                                 $key = $random->str_random(40);
             
@@ -156,11 +134,10 @@ if(isset($_POST['submit'])){
                                 $bdd2 = $dbh->prepare("UPDATE user SET confirmed=1 WHERE pseudo like :pseudo");
                                 $bdd2->bindParam(':pseudo', $pseudo);
                                 $bdd2->execute();
-            
                                 $_SESSION['email'] = $data_verif['email'];
                                 $dest = ($_SESSION['email']);
                                 $objet="Mauvais navigateur";
-                                $message='Afin de valider votre compte merci de cliquer sur ce lien http://127.0.0.1/MSPR/Pages/Connexion/connexion.php?pseudo='.urlencode($pseudo).'&key_confirm='.urlencode($key);
+                                $message='Afin de valider votre compte merci de cliquer sur ce lien https://therealchatelet.fr?pseudo='.urlencode($pseudo).'&key_confirm='.urlencode($key);
                                 $entetes="MIME-Version: 1.0\r\nContent-type:text/html;charset=iso-8859-1\r\n";
                                 $entetes.="From: selma.eljabri@epsi.fr";
                                 mail($dest, $objet, $message, $entetes);
@@ -169,32 +146,29 @@ if(isset($_POST['submit'])){
                                     $keys = $_GET['key_confirm'];
                                     $req = mysqli_query($mysqli, 'SELECT * FROM user WHERE id = '.$user_id);
                                         if($req->execute(array(':pseudo'=> $pseudo)) && $row = $req->fetch()){
-                                        $keybdd = $row['key_confirm'];
-                                        $confirmed = $row['confirmed'];
+                                            $keybdd = $row['key_confirm'];
+                                            $confirmed = $row['confirmed'];
                                         }
-                
                                         if($confirmed == '1'){
-                                        echo "compte deja actif";
+                                            echo "compte deja actif";
                                         }else{
-                                        if ($keys = $keybdd){
-                                            echo "compte activé, gg";
-                                            header("Location: ../Index/index.php");
-                                        }else{
-                                            echo "erreur";
+                                            if ($keys = $keybdd){
+                                                echo "compte activé";
+                                                header("Location: Index/index.php");
+                                            }else{
+                                                echo "erreur";
+                                            }
                                         }
-                                        }
-                                
                                     if(mail($dest, $objet, $message, $entetes)){
                                         echo "mail ok";
                                     }else{
                                         echo "pas ok";
                                     }
-                
                                     exit();
                                 }
                         }     
                 }
-            }// Si le pseudo n'existe pas
+            // Si le pseudo n'existe pas
             else{
                 ?>
                 <script>
@@ -219,7 +193,6 @@ if(isset($_POST['submit'])){
         }
         </script>   <?php
     }
-    
     
     }
     if (empty($_POST['pseudo'])){

@@ -11,10 +11,7 @@ class DetectBrowser{
                     '/safari/i'    => 'Safari',
                     '/chrome/i'    => 'Chrome',
                     '/edg/i'       => 'Edge',
-                    '/opera/i'     => 'Opera',
-                    '/netscape/i'  => 'Netscape',
-                    '/maxthon/i'   => 'Maxthon',
-                    '/konqueror/i' => 'Konqueror'
+                    '/opera/i'     => 'Opera'
         );
         foreach ($browser_array as $regex => $value)
         if (preg_match($regex, $user_agent))
