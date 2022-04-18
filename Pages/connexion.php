@@ -33,8 +33,12 @@ if(isset($_POST['submit'])){
             $pseudo = $_POST['pseudo'];
             $user = $pseudo;
             $password = $_POST['mdp']; 
-            $connect = ldap_connect($ldap_host);
-            fsockopen('therealchatelet.net', 389);
+            $ldapPort = 389; 
+            $connect = ldap_connect($ldap_host, $ldapPort);
+            
+                $ldapVersionProtocole = 3; // Version par défaut = 2
+                ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, $ldapVersionProtocole);
+
             $bind = ldap_bind($connect, $user, $password);
             if ($bind) {
                 echo "réussi";
