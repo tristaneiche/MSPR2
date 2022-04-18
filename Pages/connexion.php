@@ -48,35 +48,50 @@ session_start();
 $session_id = session_id();
 if(isset($_POST['submit'])){
     if(!empty($_POST['pseudo']) AND !empty($_POST['mdp'])){
-      require_once('AntiBruteForce/AntiBruteForce.php');
-      $antibruteforce = new AntiBruteForce();
-      $script1 = $antibruteforce->anti_brute_force();
-      // S'il y a eu moins de 30 identifications ratées dans la journée, on laisse passer
-    if($tentatives < 30){
+        $existence_ft = '';
+        // Si le fichier existe, on le lit
+        if(file_exists('AntiBruteForce/antibrute/'.$_POST['pseudo'].'.tmp')){
+            // On ouvre le fichier
+            $fichier_tentatives = fopen('AntiBruteForce/antibrute/'.$_POST['pseudo'].'.tmp', 'r+');
+            // On récupère son contenu dans la variable $infos_tentatives
+            $contenu_tentatives = fgets($fichier_tentatives);
+            // On découpe le contenu du fichier pour récupérer les informations
+            $infos_tentatives = explode(';', $contenu_tentatives);
+            // Si la date du fichier est celle d'aujourd'hui, on récupère le nombre de tentatives
+            if($infos_tentatives[0] == date('d/m/Y')){
+                $tentatives = $infos_tentatives[1];
+            }
+            // Si la date du fichier est dépassée, on met le nombre de tentatives à 0 et $existence_ft à 2
+            else{
+                $existence_ft = 2;
+                $tentatives = 0; // On met la variable $tentatives à 0
+            }
+        }
+        // Si le fichier n'existe pas encore, on met la variable $existence_ft à 1 et on met les $tentatives à 0
+        else{
+            $existence_ft = 1;
+            $tentatives = 0;
+        }
+        // S'il y a eu moins de 5 identifications ratées dans la journée, on laisse passer
+    if($tentatives < 5){
+
+        $mysqli = mysqli_connect("localhost", "root", "", "mspr");
+
+        $verifications = mysqli_query($mysqli,'SELECT * FROM user WHERE pseudo = \''.mysqli_real_escape_string($mysqli, $_POST['pseudo']).'\' ');
+          $data_verif = mysqli_fetch_assoc($verifications);
+
         if ( preg_match("!".$membres."!",$info[0]["dn"]) ) // si le user trouvé est membre
             {
             $bind = ldap_bind($connect,$info[0]["dn"],$password);
             if ( $bind == FALSE ){// si BIND==FALSE, mdp faux
                 echo "La connexion provient d'un compte membre mais le mdp est erroné";
-
-                // Si le fichier n'existe pas encore, on le créé
-                if($existence_ft == 1){
-                    $creation_fichier = fopen('antibrute/'.$data_verif['pseudo'].'.tmp', 'a+'); // On créé le fichier puis on l'ouvre
-                    fputs($creation_fichier, date('d/m/Y').';1'); // On écrit à l'intérieur la date du jour et on met le nombre de tentatives à 1
-                    fclose($creation_fichier); // On referme
-                }
-                // Si la date n'est plus a jour
-                elseif($existence_ft == 2){
-                    fseek($fichier_tentatives, 0); // On remet le curseur au début du fichier
-                    fputs($fichier_tentatives, date('d/m/Y').';1 '); // On met à jour le contenu du fichier (date du jour;1 tentatives)
-                }
                 else{
 
-                    // Si la variable $tentatives est sur le point de passer à 30, on en informe l'administrateur du site
-                    if($tentatives == 29){
-                        $email_administrateur = 'Email de administrateur du site';
-                        $sujet_notification = 'Un compte membre a atteint son quota';
-                        $message_notification = 'Un des comptes a atteint le quota de mauvais mots de passe journalier :';
+                    // Si la variable $tentatives est sur le point de passer à 5, on en informe l'administrateur du site
+                    if($tentatives == 4){
+                        $email_administrateur = 'selma.eljabri1@gmail.com';
+                        $sujet_notification = 'Un compte membre va atteindre son quota';
+                        $message_notification = 'Un des comptes va atteindre le quota de mauvais mots de passe journalier :';
                         $message_notification .= $data_verif['pseudo'].' - '.$_SERVER['REMOTE_ADDR'].' - '.gethostbyaddr($_SERVER['REMOTE_ADDR']);
 
                         mail($email_administrateur, $sujet_notification, $message_notification);
@@ -88,16 +103,17 @@ if(isset($_POST['submit'])){
             }
             
             elseif ( $bind == TRUE ){
-                        require_once('DetectBrowser/DetectBrowser.php');
-                        $detect_browser = new DetectBrowser();
+                        require_once('../detectBrowser.php');
+                        $detect_browser = new detectBrowser();
                         $browser = $detect_browser->detect_browser();
                         if($data_verif['navigateur'] == $browser){
-                            require_once('DetectIp/DetectIp.php');
-                            $detect_ip = new DetectIp();
+                            require_once('../detectIp.php');
+                            $detect_ip = new detectIp();
                             $ip = $detect_ip->detect_ip();
                             if($data_verif['ip'] = $ip){
                                 $_SESSION['pseudo'] = $data_verif['pseudo'];  
-                                header("Location: " . 'A2F/index.php', true, 301);
+                                header("Location: " . '../A2F/index.php', true, 301);
+                                //include '../Index/index.php';
                             }else{
                                 $french_ips = array("/^102\.12\.[0-9]{1,3}\.[0-9]{1,3}/","/^201\.2\.[0-9]{1,3}\.[0-9]{1,3}/");
                                 $ip_is_french=false;
@@ -125,7 +141,7 @@ if(isset($_POST['submit'])){
                             }
                         }else{
                                 $pseudo = $_POST['pseudo'];
-                                include_once 'Double_Co_Mail/randomizer.php';
+                                include_once '../Double_Co_Mail/randomizer.php';
                                 $random = new randomizer();
                                 $key = $random->str_random(40);
             
@@ -162,7 +178,7 @@ if(isset($_POST['submit'])){
                                         }else{
                                         if ($keys = $keybdd){
                                             echo "compte activé, gg";
-                                            header("Location: Index/index.php");
+                                            header("Location: ../Index/index.php");
                                         }else{
                                             echo "erreur";
                                         }
