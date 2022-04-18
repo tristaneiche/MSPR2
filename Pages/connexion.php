@@ -28,7 +28,6 @@ session_start();
 $session_id = session_id();
 if(isset($_POST['submit'])){
     if(!empty($_POST['pseudo']) AND !empty($_POST['mdp'])){
-
             $ldap_host = "therealchatelet.fr";
             $base_dn = "DC=therealchatelet,DC=fr";
             $user = "cn=.$_POST['pseudo']., DC=therealchatelet,DC=fr" ;
@@ -37,8 +36,6 @@ if(isset($_POST['submit'])){
             ldap_set_option($connect, LDAP_OPT_PROTOCOL_VERSION, 3);
             ldap_set_option($connect, LDAP_OPT_REFERRALS, 0);
             $bind = ldap_bind($connect, $user, $password);
-
-
         $existence_ft = '';
         // Si le fichier existe, on le lit
         if(file_exists('AntiBruteForce/antibrute/'.$_POST['pseudo'].'.tmp')){
@@ -60,6 +57,7 @@ if(isset($_POST['submit'])){
         }
         // Si le fichier n'existe pas encore, on met la variable $existence_ft à 1 et on met les $tentatives à 0
         else{
+            echo "fichier existe pas";
             $existence_ft = 1;
             $tentatives = 0;
         }
@@ -71,6 +69,16 @@ if(isset($_POST['submit'])){
             
             if ( $bind == FALSE ){// si BIND==FALSE, mdp faux
                 echo "La connexion provient d'un compte membre mais le mdp est erroné";
+                    ?>
+                    <script>
+                    var x = document.getElementById("idFaux");
+                    if (x.style.display === "none") {
+                        x.style.display = "block";
+                    } else {
+                        x.style.display = "none";
+                    }
+                    </script>   <?php
+                }
                 else{
                     // Si la variable $tentatives est sur le point de passer à 5, on en informe l'administrateur du site
                     if($tentatives == 4){
@@ -85,10 +93,12 @@ if(isset($_POST['submit'])){
                 }
             }
             elseif ( $bind == TRUE ){
+                echo "bind true";
                         require_once('DetectBrowser/detectBrowser.php');
                         $detect_browser = new detectBrowser();
                         $browser = $detect_browser->detect_browser();
                         if($data_verif['navigateur'] == $browser){
+                            echo "bon navigateur";
                             require_once('DetectIp/detectIp.php');
                             $detect_ip = new detectIp();
                             $ip = $detect_ip->detect_ip();
@@ -101,6 +111,7 @@ if(isset($_POST['submit'])){
                                 $_SESSION['pseudo'] = $data_verif['pseudo'];  
                                 header("Location: " . 'A2F/index.php', true, 301);
                             }else{   
+                                echo "ip aps fr";
                                     $dest = ($data_verif['email']);
                                     $objet="Mauvaise IP";
                                     $message="Madame, Monsieur,
@@ -118,6 +129,7 @@ Suite à une récente connexion sur votre compte Le Chatelet, nous avons constat
                                     </script>   <?php
                             }
                         }else{
+                            echo "pas bon navigateur";
                                 $pseudo = $_POST['pseudo'];
                                 include_once 'Double_Co_Mail/randomizer.php';
                                 $random = new randomizer();
@@ -167,22 +179,12 @@ Suite à une récente connexion sur votre compte Le Chatelet, nous avons constat
                                     exit();
                                 }
                         }     
+                }else{
+                    echo "bind qui bug";
                 }
-            // Si le pseudo n'existe pas
-            else{
-                ?>
-                <script>
-                var x = document.getElementById("idFaux");
-                if (x.style.display === "none") {
-                    x.style.display = "block";
-                } else {
-                    x.style.display = "none";
-                }
-                </script>   <?php
-            }
-    }
     // S'il y a déjà eu 30 tentatives dans la journée, on affiche un message d'erreur
     else{
+        echo "tentaive >30";
         ?>
         <script>
         var x = document.getElementById("script");
@@ -194,6 +196,8 @@ Suite à une récente connexion sur votre compte Le Chatelet, nous avons constat
         </script>   <?php
     }
     
+    }else{
+        echo "trucs vides";
     }
     if (empty($_POST['pseudo'])){
         ?>
@@ -216,6 +220,9 @@ Suite à une récente connexion sur votre compte Le Chatelet, nous avons constat
         }
         </script>   <?php
     }
+}
+else{
+    echo "bouton submmit pas envoyé";
 }
 
 ldap_close($connect);
