@@ -30,7 +30,8 @@ if(isset($_POST['submit'])){
     if(!empty($_POST['pseudo']) AND !empty($_POST['mdp'])){
             $ldap_host = "therealchatelet.fr";
             $base_dn = "DC=therealchatelet,DC=fr";
-            $user = "cn=.$_POST['pseudo'], DC=therealchatelet, DC=fr" ;
+            $pseudo = $_POST['pseudo'];
+            $user = "cn=$pseudo, DC=therealchatelet, DC=fr" ;
             $password = $_POST['mdp']; 
             $connect = ldap_connect($ldap_host)or exit("Connexion au serveur LDAP echouée");   
             ldap_set_option($connect, LDAP_OPT_PROTOCOL_VERSION, 3);
