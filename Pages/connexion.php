@@ -29,13 +29,13 @@ $session_id = session_id();
 if(isset($_POST['submit'])){
     if(!empty($_POST['pseudo']) AND !empty($_POST['mdp'])){
             $ldap_host = "therealchatelet.net";
-            $base_dn = "dc=therealchatelet,dc=net";
-            $pseudo_ldap = "";
-            $mdp_ldap = "";
+            $base_dn = "CN=Administrateur, CN=Users, DC=therealchatelet, DC=net";
+            $pseudo_ldap = "Administrateur";
+            $mdp_ldap = "Dove1!";
             $ldapPort = 389; 
             $connect = ldap_connect($ldap_host, $ldapPort);
             ldap_set_option($connect, LDAP_OPT_PROTOCOL_VERSION, 3);
-            $bind = ldap_bind($connect);
+            $bind = ldap_bind($connect, $pseudo_ldap, $mdp_ldap);
 
 
             if ($bind) {
