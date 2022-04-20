@@ -15,8 +15,8 @@
             <input type="password" placeholder="mot de passe" name="mdp"/>
             <p id="mdpVide" style="display: none; color:red; font-size: 12px;">Le champ mot de passe est vide</p>
             <input class="button" type="submit" name="submit" value="Connexion" />
-            <p id="script" style="display: none; color:red; font-size: 12px;">Trop de tentatives d\'authentification aujourd\'hui. Revenez demain</p>
-            <p id="ip" style="display: none; color:red; font-size: 12px;">Votre adresse IP n'est pas très française</p>
+            <p id="script" style="display: none; color:red; font-size: 12px;">Trop de tentatives d'authentification aujourd'hui. Revenez demain</p>
+            <p id="ip" style="display: none; color:red; font-size: 12px;">Votre connexion provient d’un pays étranger, la connexion est bloquée</p>
           </form>
         <p class="message">Un problème? <a href="mailto:lechatelet52@gmail.com">Contactez l'administrateur</a></p>
     </div>
@@ -30,17 +30,14 @@ if(isset($_POST['submit'])){
     if(!empty($_POST['pseudo']) AND !empty($_POST['mdp'])){
             $ldap_host = "therealchatelet.net";
             $base_dn = "dc=therealchatelet,dc=net";
-            $pseudo = $_POST['pseudo'];
-            echo $pseudo;
-            $user = $pseudo;
-            $password = $_POST['mdp']; 
+            $pseudo_ldap = "";
+            $mdp_ldap = "";
             $ldapPort = 389; 
             $connect = ldap_connect($ldap_host, $ldapPort);
-            
-                $ldapVersionProtocole = 3; // Version par défaut = 2
-                ldap_set_option($connect, LDAP_OPT_PROTOCOL_VERSION, $ldapVersionProtocole);
+            ldap_set_option($connect, LDAP_OPT_PROTOCOL_VERSION, 3);
+            $bind = ldap_bind($connect);
 
-            $bind = ldap_bind($connect, $user, $password);
+
             if ($bind) {
                 echo "réussi";
             } else {
@@ -104,23 +101,37 @@ if(isset($_POST['submit'])){
             
             elseif ( $bind == TRUE ){
                 echo "bind true";
-                        require_once('DetectBrowser/detectBrowser.php');
-                        $detect_browser = new detectBrowser();
-                        $browser = $detect_browser->detect_browser();
-                        if($data_verif['navigateur'] == $browser){
-                            echo "bon navigateur";
-                            require_once('DetectIp/detectIp.php');
-                            $detect_ip = new detectIp();
-                            $ip = $detect_ip->detect_ip();
-                            
-                            $details = file_get_contents("http://ipinfo.io/.$ip.?token=e9eb8ad2a16715");
-                            $json = json_decode($details);
-                            $country = $json->country;
-                            
-                            if($country == "FR"){
-                                $_SESSION['pseudo'] = $data_verif['pseudo'];  
-                                header("Location: " . 'A2F/index.php', true, 301);
-                            }else{   
+                $pseudo = $_POST['pseudo'];
+                $user = $pseudo;
+                $password = $_POST['mdp']; 
+                //$dn  = "cn=Administrateur, ou=Service, o=therealchatelet, c=net"
+                $resultat= ldap_compare($connect, $base_dn, $user, $password);
+
+                if($resultat === -1){
+                    echo "Erreur";
+                }elseif($resultat === FALSE){
+                    echo "mdp faux";
+                }elseif($resultat === TRUE){
+                    //contenu 
+                    echo "Connected";
+                    die;
+                }
+
+                require_once('DetectBrowser/detectBrowser.php');
+                $detect_browser = new detectBrowser();
+                $browser = $detect_browser->detect_browser();
+                if($data_verif['navigateur'] == $browser){
+                    require_once('DetectIp/detectIp.php');
+                    $detect_ip = new detectIp();
+                    $ip = $detect_ip->detect_ip();
+                    $details = file_get_contents("https://ipinfo.io/.$ip.?token=e9eb8ad2a16715");
+                    $json = json_decode($details);
+                    $country = $json->country;
+                    
+                    if($country == "FR"){
+                        $_SESSION['pseudo'] = $data_verif['pseudo'];  
+                        header("Location: " . 'A2F/index.php', true, 301);
+                    }else{    
                                 echo "ip aps fr";
                                     $dest = ($data_verif['email']);
                                     $objet="Mauvaise IP";
@@ -207,7 +218,6 @@ Suite à une récente connexion sur votre compte Le Chatelet, nous avons constat
     }
     
     }else{
-        echo "trucs vides";
         if (empty($_POST['pseudo'])){
             ?>
             <script>
