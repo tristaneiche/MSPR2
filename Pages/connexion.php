@@ -113,7 +113,7 @@ if(isset($_POST['submit'])){
                     require_once('DetectBrowser/detectBrowser.php');
                     $detect_browser = new detectBrowser();
                     $browser = $detect_browser->detect_browser();
-                    if($data_verif['navigateur'] == $browser){
+                    if(isset($data_verif['navigateur']) == $browser){
                         echo " browser" ;
                         require_once('DetectIp/detectIp.php');
                         $detect_ip = new detectIp();
@@ -149,7 +149,7 @@ if(isset($_POST['submit'])){
                                     $random = new randomizer();
                                     $key = $random->str_random(40);
                 
-                                    $dbh = new PDO('mysql:host=localhost;dbname=mspr', 'root', '');
+                                    $dbh = new PDO('mysql:host=localhost;dbname=Users', 'lechatelet', 'dove');
                 
                                     $user_id = $data_verif['id'];
                                     $bdd = $dbh->prepare("UPDATE user SET key_confirm=:key_confirm WHERE pseudo like :pseudo");
