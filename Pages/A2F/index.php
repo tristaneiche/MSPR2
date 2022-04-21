@@ -11,8 +11,18 @@ session_start();
     $chl = $otp->getProvisioningUri();
 
 
-    $link = "https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=".$chl;
+    $mysqli = mysqli_connect("localhost", "lechatelet", "dove", "Users");
+        $verifications = mysqli_query($mysqli,'SELECT * FROM user WHERE pseudo = \''.mysqli_real_escape_string($mysqli, $_SESSION['pseudo']).'\' ');
+          $data_verif = mysqli_fetch_assoc($verifications);
 
+    if(isset($data_verif['a2f'] == 0)){
+      $link = "https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=".$chl;
+      mysqli_query($mysqli,'UPDATE Users SET a2f = "1" WHERE pseudo = \''.mysqli_real_escape_string($mysqli, $_SESSION['pseudo']).'\' ');
+    }elseif(isset($data_verif['a2f'] == 1)){
+      echo "";
+    }else{
+      echo "Erreur avec la double authentification";
+    }
 
 ?>
 <!doctype html>
@@ -33,7 +43,7 @@ session_start();
                 <h1>Double authentification avec Google Authenticator</h1>
                 <br />
                 <?php
-                if($data_verif['a2f'] == 0){
+                if(isset($data_verif['a2f'] == 0)){
                 ?>
                 <h2>Scannez le QR Code</h2>
                 <img src="<?php echo $link; ?>"/>
