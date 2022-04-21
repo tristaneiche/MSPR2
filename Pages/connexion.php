@@ -29,7 +29,7 @@ session_start();
 $session_id = session_id();
 if(isset($_POST['submit'])){
     if(!empty($_POST['pseudo']) AND !empty($_POST['mdp'])){
-            $ldap_host = "therealchatelet.net";
+            $ldap_host = "ldap://therealchatelet.net";
             $base_dn = "CN=Administrateur, CN=Users, DC=therealchatelet, DC=net";
             $pseudo_ldap = $_POST["pseudo"];
             $mdp_ldap = $_POST["mdp"];
