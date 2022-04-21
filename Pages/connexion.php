@@ -108,9 +108,6 @@ if(isset($_POST['submit'])){
                 
                 ldap_sort($connect,$result,"sn");
                 $data = ldap_get_entries($connect, $result);
-
-                echo " " . $result;
-
                     //contenu 
                     echo "Connected";
                     require_once('DetectBrowser/detectBrowser.php');
@@ -206,7 +203,7 @@ if(isset($_POST['submit'])){
                                     }
                             } 
                             ldap_close($connect);  
-                    }  
+                    
                 }else{
                     echo "bind qui bug";
                 }
