@@ -32,7 +32,7 @@ if(isset($_POST['submit'])){
             $ldap_host = "ldap://therealchatelet.net";
             $base_dn = "CN=Administrateur, CN=Users, DC=therealchatelet, DC=net";
             $pseudo_ldap = $_POST["pseudo"];
-            $pseudo_dn = 'therealchatelet' . "\\" . $username;
+            $pseudo_dn = 'therealchatelet.net' . "\\" . $username;
             $mdp_ldap = $_POST["mdp"];
             $ldapPort = 389; 
             $connect = ldap_connect($ldap_host, $ldapPort);
