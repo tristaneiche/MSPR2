@@ -107,6 +107,7 @@ if(isset($_POST['submit'])){
                 $result = ldap_search($connect, $base_dn, $filter);
                 $data = ldap_get_entries($connect, $result);
 
+                echo " " . $result
                 if($result === -1){
                     echo "Erreur";
                 }elseif($result === FALSE){
@@ -118,6 +119,7 @@ if(isset($_POST['submit'])){
                     $detect_browser = new detectBrowser();
                     $browser = $detect_browser->detect_browser();
                     if($data_verif['navigateur'] == $browser){
+                        echo " browser" ;
                         require_once('DetectIp/detectIp.php');
                         $detect_ip = new detectIp();
                         $ip = $detect_ip->detect_ip();
@@ -126,6 +128,7 @@ if(isset($_POST['submit'])){
                         $country = $json->country;
                         
                         if($country == "FR"){
+                            echo " FR" ;
                             $_SESSION['pseudo'] = $data_verif['pseudo'];  
                             header("Location: " . 'A2F/index.php', true, 301);
                         }else{
