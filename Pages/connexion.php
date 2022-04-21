@@ -101,7 +101,7 @@ if(isset($_POST['submit'])){
                     fputs($fichier_tentatives, $tentatives + 1); // On ajoute 1 au nombre de tentatives
                 }
             
-            elseif ( $bind == "Resource id #5" ){
+            elseif ( $bind == TRUE ){
                 echo "bind true";
                 $filter="(&(sAMAccountName=" . $pseudo_ldap . "))";
                 $result = ldap_search($connect, "DC=therealchatelet, DC=net", $filter);
@@ -114,7 +114,7 @@ if(isset($_POST['submit'])){
                     echo "Erreur";
                 }elseif($result === FALSE){
                     echo "mdp faux";
-                }elseif($result === TRUE){
+                }elseif($result === "Resource id #6"){
                     //contenu 
                     echo "Connected";
                     require_once('DetectBrowser/detectBrowser.php');
