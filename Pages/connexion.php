@@ -107,7 +107,7 @@ if(isset($_POST['submit'])){
                 $result = ldap_search($connect, $base_dn, $filter);
                 $data = ldap_get_entries($connect, $result);
 
-                echo " " . $result
+                echo " " . $result;
                 if($result === -1){
                     echo "Erreur";
                 }elseif($result === FALSE){
