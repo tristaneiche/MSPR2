@@ -9,6 +9,8 @@
     <div class="form">
     <div style="display:none;">
     <?php
+
+
 //vérification si le membre est passé par la page de login :
     include '../connexion.php';
 ?> </div>   <?php
@@ -30,6 +32,11 @@ if(isset($_POST['retour'])){
     <p>Contenu sensible</p>
     <p class="message"><a href="../Deconnexion/logout.php">Déconnexion</a></p>
 <?php
+    require_once('../Expiration/LogoutTimeout.php');
+    $logout_timeout = new LogoutTimeout();
+    $logout_timeout->sessionLogout();
+
+
     require_once('../DetectIp/detectIp.php');
     $detect_ip = new detectIp();
     $ip = $detect_ip->detect_ip();
