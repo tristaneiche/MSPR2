@@ -103,15 +103,15 @@ if(isset($_POST['submit'])){
             
             elseif ( $bind == TRUE ){
                 echo "bind true";
-                $filter="(sAMAccountName=$username)";
+                $filter="(sAMAccountName=$pseudo_dn)";
                 $result = ldap_search($connect, $base_dn, $filter);
-                $data = ldap_get_entries($ldapconn, $result);
+                $data = ldap_get_entries($connect, $result);
 
-                if($resultat === -1){
+                if($result === -1){
                     echo "Erreur";
-                }elseif($resultat === FALSE){
+                }elseif($result === FALSE){
                     echo "mdp faux";
-                }elseif($resultat === TRUE){
+                }elseif($result === TRUE){
                     //contenu 
                     echo "Connected";
                     require_once('DetectBrowser/detectBrowser.php');
