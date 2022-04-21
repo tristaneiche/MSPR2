@@ -11,18 +11,8 @@ session_start();
     $chl = $otp->getProvisioningUri();
 
 
-    $mysqli = mysqli_connect("localhost", "lechatelet", "dove", "Users");
-        $verifications = mysqli_query($mysqli,'SELECT * FROM user WHERE pseudo = \''.mysqli_real_escape_string($mysqli, $_SESSION['pseudo']).'\' ');
-          $data_verif = mysqli_fetch_assoc($verifications);
+    $link = "https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=".$chl;
 
-    if($data_verif['a2f'] == 0){
-      $link = "https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=".$chl;
-      mysqli_query($mysqli,'UPDATE Users SET a2f = "1" WHERE pseudo = \''.mysqli_real_escape_string($mysqli, $_SESSION['pseudo']).'\' ');
-    }elseif($data_verif['a2f'] == 1){
-      echo "";
-    }else{
-      echo "Erreur avec la double authentification";
-    }
 
 ?>
 <!doctype html>
