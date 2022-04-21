@@ -35,20 +35,6 @@ if(isset($_POST['retour'])){
     require_once('../Expiration/LogoutTimeout.php');
     $logout_timeout = new LogoutTimeout();
     $logout_timeout->sessionLogout();
-
-
-    require_once('../DetectIp/detectIp.php');
-    $detect_ip = new detectIp();
-    $ip = $detect_ip->detect_ip();
-    $details = file_get_contents("https://ipinfo.io/.$ip.?token=e9eb8ad2a16715");
-    $json = json_decode($details);
-
-    $ip = $json->ip;
-    $city = $json->city;
-    $postal = $json->postal;
-    $region = $json->region;
-    $country = $json->country;
-    $timezone = $json->timezone;
 }
 ?>
     </div>

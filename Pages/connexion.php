@@ -40,14 +40,6 @@ if(isset($_POST['submit'])){
             ldap_set_option($connect, LDAP_OPT_REFERRALS, 0);
             $bind = @ldap_bind($connect, $pseudo_ldap, $mdp_ldap);
 
-
-            if ($bind) {
-                echo "réussi";
-            } else {
-                echo "fail";   
-            }
-
-
             $existence_ft = '';
         // Si le fichier existe, on le lit
         if(file_exists('AntiBruteForce/antibrute/'.$_POST['pseudo'].'.tmp')){
@@ -88,7 +80,6 @@ if(isset($_POST['submit'])){
                 x.style.display = "none";
                 }
                 </script> <?php
-                
                     // Si la variable $tentatives est sur le point de passer à 5, on en informe l'administrateur du site
                     if($tentatives == 4){
                         $email_administrateur = 'selma.eljabri1@gmail.com';
@@ -102,19 +93,15 @@ if(isset($_POST['submit'])){
                 }
             
             elseif ( $bind == TRUE ){
-                echo "bind true";
                 $filter="(&(sAMAccountName=" . $pseudo_ldap . "))";
                 $result = ldap_search($connect, "DC=therealchatelet, DC=net", $filter);
                 
                 ldap_sort($connect,$result,"sn");
                 $data = ldap_get_entries($connect, $result);
-                    //contenu 
-                    echo "Connected";
                     require_once('DetectBrowser/detectBrowser.php');
                     $detect_browser = new detectBrowser();
                     $browser = $detect_browser->detect_browser();
                     if(isset($data_verif['navigateur']) == $browser){
-                        echo " browser" ;
                         $details = file_get_contents("https://ipinfo.io/".$_SERVER['REMOTE_ADDR']."?token=e9eb8ad2a16715");
                         var_dump($details);
                         print_r("https://ipinfo.io/".$_SERVER['REMOTE_ADDR']."?token=e9eb8ad2a16715");
@@ -123,7 +110,7 @@ if(isset($_POST['submit'])){
                         
                         if($country == "FR"){
                             echo " FR" ;
-                            $_SESSION['pseudo'] = isset($data_verif['pseudo']);  
+                            $_SESSION['pseudo'] = $data_verif['pseudo'];  
                             header("Location: " . 'A2F/index.php', true, 301);
                         }else{
                                         $dest = (isset($data_verif['email']));
@@ -193,18 +180,10 @@ if(isset($_POST['submit'])){
                                                     echo "erreur";
                                                 }
                                             }
-                                        if(mail($dest, $objet, $message, $entetes)){
-                                            echo "mail ok";
-                                        }else{
-                                            echo "pas ok";
-                                        }
-                                        exit();
                                     }
                             } 
                             ldap_close($connect);  
                     
-                }else{
-                    echo "bind qui bug";
                 }
     // S'il y a déjà eu 30 tentatives dans la journée, on affiche un message d'erreur
             }else{
@@ -251,6 +230,5 @@ if(isset($_POST['submit'])){
         }
     }
 }
-
 
 ?>
