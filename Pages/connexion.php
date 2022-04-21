@@ -103,7 +103,7 @@ if(isset($_POST['submit'])){
             
             elseif ( $bind == TRUE ){
                 echo "bind true";
-                $filter="(sAMAccountName=$pseudo_dn)";
+                $filter="(sAMAccountName=$pseudo_ldap)";
                 $result = ldap_search($connect, $base_dn, $filter);
                 $data = ldap_get_entries($connect, $result);
 
