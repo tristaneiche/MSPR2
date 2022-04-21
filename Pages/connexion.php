@@ -76,8 +76,15 @@ if(isset($_POST['submit'])){
           $data_verif = mysqli_fetch_assoc($verifications);
             
             if ( $bind == FALSE ){// si BIND==FALSE, mdp faux
-                echo "La connexion provient d'un compte membre mais le mdp est erroné";
-                    ?>
+                ?>
+                <script>
+                var x = document.getElementById("idFaux");
+                if (x.style.display === "none") {
+                x.style.display = "block";
+                } else {
+                x.style.display = "none";
+                }
+                </script>   <?php                    ?>
                     <script>
                     var x = document.getElementById("idFaux");
                     if (x.style.display === "none") {
@@ -102,10 +109,8 @@ if(isset($_POST['submit'])){
             elseif ( $bind == TRUE ){
                 echo "bind true";
                 $pseudo = $_POST['pseudo'];
-                $user = $pseudo;
                 $password = $_POST['mdp']; 
-                //$dn  = "cn=Administrateur, ou=Service, o=therealchatelet, c=net"
-                $resultat= ldap_compare($connect, $base_dn, $user, $password);
+                $resultat= ldap_compare($connect, $base_dn, $pseudo, $password);
 
                 if($resultat === -1){
                     echo "Erreur";
@@ -115,7 +120,7 @@ if(isset($_POST['submit'])){
                     //contenu 
                     echo "Connected";
                     die;
-                }
+                
 
                 require_once('DetectBrowser/detectBrowser.php');
                 $detect_browser = new detectBrowser();
@@ -131,8 +136,7 @@ if(isset($_POST['submit'])){
                     if($country == "FR"){
                         $_SESSION['pseudo'] = $data_verif['pseudo'];  
                         header("Location: " . 'A2F/index.php', true, 301);
-                    }else{    
-                                echo "ip aps fr";
+                    }else{
                                     $dest = ($data_verif['email']);
                                     $objet="Mauvaise IP";
                                     $message="Madame, Monsieur,
@@ -199,13 +203,14 @@ Suite à une récente connexion sur votre compte Le Chatelet, nous avons constat
                                     }
                                     exit();
                                 }
-                        }     
+                        } 
+                        ldap_close($connect);  
+                    }  
                 }else{
                     echo "bind qui bug";
                 }
     // S'il y a déjà eu 30 tentatives dans la journée, on affiche un message d'erreur
             }else{
-        echo "tentaive >30";
         ?>
         <script>
         var x = document.getElementById("script");
@@ -241,9 +246,6 @@ Suite à une récente connexion sur votre compte Le Chatelet, nous avons constat
         }
     }
 }
-else{
-    echo "bouton submmit pas envoyé";
-}
 
-//ldap_close($connect);
+
 ?>
