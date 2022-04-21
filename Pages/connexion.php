@@ -85,15 +85,7 @@ if(isset($_POST['submit'])){
                 } else {
                 x.style.display = "none";
                 }
-                </script>   <?php                    ?>
-                    <script>
-                    var x = document.getElementById("idFaux");
-                    if (x.style.display === "none") {
-                        x.style.display = "block";
-                    } else {
-                        x.style.display = "none";
-                    }
-                    </script>   <?php
+                </script> <?php
                 
                     // Si la variable $tentatives est sur le point de passer à 5, on en informe l'administrateur du site
                     if($tentatives == 4){
@@ -228,7 +220,15 @@ if(isset($_POST['submit'])){
         </script>   <?php
     }
     
-    }else{
+    }else{?>
+        <script>
+        var x = document.getElementById("idFaux");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+        </script>   <?php
         if (empty($_POST['pseudo'])){
             ?>
             <script>
