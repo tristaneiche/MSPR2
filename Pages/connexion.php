@@ -31,11 +31,12 @@ if(isset($_POST['submit'])){
     if(!empty($_POST['pseudo']) AND !empty($_POST['mdp'])){
             $ldap_host = "therealchatelet.net";
             $base_dn = "CN=Administrateur, CN=Users, DC=therealchatelet, DC=net";
-            $pseudo_ldap = "Administrateur";
-            $mdp_ldap = "Dove1!";
+            $pseudo_ldap = $_POST["pseudo"];
+            $mdp_ldap = $_POST["mdp"];
             $ldapPort = 389; 
             $connect = ldap_connect($ldap_host, $ldapPort);
             ldap_set_option($connect, LDAP_OPT_PROTOCOL_VERSION, 3);
+            ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
             $bind = ldap_bind($connect, $pseudo_ldap, $mdp_ldap);
 
 
@@ -101,9 +102,9 @@ if(isset($_POST['submit'])){
             
             elseif ( $bind == TRUE ){
                 echo "bind true";
-                $pseudo = $_POST['pseudo'];
-                $password = $_POST['mdp']; 
-                $resultat= ldap_compare($connect, $base_dn, $pseudo, $password);
+                $filter="(sAMAccountName=$username)";
+                $result = ldap_search($connect, $base_dn, $filter);
+                $data = ldap_get_entries($ldapconn, $result);
 
                 if($resultat === -1){
                     echo "Erreur";
