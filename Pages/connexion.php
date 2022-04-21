@@ -110,11 +110,7 @@ if(isset($_POST['submit'])){
                 $data = ldap_get_entries($connect, $result);
 
                 echo " " . $result;
-                if($result === -1){
-                    echo "Erreur";
-                }elseif($result === FALSE){
-                    echo "mdp faux";
-                }elseif($result === "Resource id #6"){
+
                     //contenu 
                     echo "Connected";
                     require_once('DetectBrowser/detectBrowser.php');
