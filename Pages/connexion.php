@@ -101,7 +101,7 @@ if(isset($_POST['submit'])){
                     fputs($fichier_tentatives, $tentatives + 1); // On ajoute 1 au nombre de tentatives
                 }
             
-            elseif ( $bind == TRUE ){
+            elseif ( $bind == "Resource id #5" ){
                 echo "bind true";
                 $filter="(&(sAMAccountName=" . $pseudo_ldap . "))";
                 $result = ldap_search($connect, "DC=therealchatelet, DC=net", $filter);
