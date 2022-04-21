@@ -115,12 +115,9 @@ if(isset($_POST['submit'])){
                     $browser = $detect_browser->detect_browser();
                     if(isset($data_verif['navigateur']) == $browser){
                         echo " browser" ;
-                        require_once('DetectIp/detectIp.php');
-                        $detect_ip = new detectIp();
-                        $ip = $detect_ip->detect_ip();
                         $details = file_get_contents("https://ipinfo.io/".$_SERVER['REMOTE_ADDR']."?token=e9eb8ad2a16715");
                         var_dump($details);
-                        print_r($details);
+                        print_r("https://ipinfo.io/".$_SERVER['REMOTE_ADDR']."?token=e9eb8ad2a16715");
                         $json = json_decode($details);
                         $country = $json->country;
                         
