@@ -118,7 +118,7 @@ if(isset($_POST['submit'])){
                         require_once('DetectIp/detectIp.php');
                         $detect_ip = new detectIp();
                         $ip = $detect_ip->detect_ip();
-                        $details = file_get_contents("https://ipinfo.io/.$ip.?token=e9eb8ad2a16715");
+                        $details = file_get_contents("https://ipinfo.io/".$_SERVER['REMOTE_ADDR']."?token=e9eb8ad2a16715");
                         var_dump($details);
                         $json = json_decode($details);
                         $country = $json->country;
