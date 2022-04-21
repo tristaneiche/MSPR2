@@ -37,7 +37,7 @@ if(isset($_POST['submit'])){
             $connect = ldap_connect($ldap_host, $ldapPort);
             ldap_set_option($connect, LDAP_OPT_PROTOCOL_VERSION, 3);
             ldap_set_option($connect, LDAP_OPT_REFERRALS, 0);
-            $bind = ldap_bind($connect, $pseudo_ldap, $mdp_ldap);
+            $bind = @ldap_bind($connect, $pseudo_ldap, $mdp_ldap);
 
 
             if ($bind) {
