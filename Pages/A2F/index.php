@@ -11,11 +11,11 @@ session_start();
     $chl = $otp->getProvisioningUri();
 
     $mysqli = mysqli_connect("localhost", "lechatelet", "dove", "Users");
-    echo $mysqli;
 
-    if ($mysqli->connect_errno) {
-      echo "Failed to connect to MySQL: " . $mysqli->connect_error;
-      exit();
+    if ($mysqli) {
+      echo "ok";
+    }else{
+      echo "tg";
     }
 
     $verifications = mysqli_query($mysqli,'SELECT a2f FROM user WHERE pseudo = \''.mysqli_real_escape_string($mysqli, $_SESSION['pseudo']).'\' ');
