@@ -16,7 +16,7 @@ session_start();
     $verifications = mysqli_query($mysqli,'SELECT a2f FROM user WHERE pseudo = \''.mysqli_real_escape_string($mysqli, $_SESSION['pseudo']).'\' ');
           $data_verif = mysqli_fetch_assoc($verifications);
 
-    echo " " . $data_verif['a2f']
+    echo " " . $data_verif['a2f'];
     if($data_verif['a2f'] == 0){
       $link = "https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=".$chl;
       mysqli_query($mysqli, 'UPDATE Users SET a2f = "1" WHERE pseudo = \''.mysqli_real_escape_string($mysqli, $_SESSION['pseudo']).'\' ');
