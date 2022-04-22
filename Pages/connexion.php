@@ -20,7 +20,7 @@
             <p id="browser" style="display: none; color:red; font-size: 12px;">Votre connexion provient d’un nouveau navigateur, veuillez confirmer votre identité par mail</p>
           </form>
         <p class="message">Un problème? <a href="mailto:lechatelet52@gmail.com">Contactez l'administrateur</a></p>
-        <a class="pour_selma" href="pdf/Mentions légales.pdf" target="_blank">Mentions Légales</a>
+        <a class="pour_selma" href="pdf/Mentions_legales.pdf" target="_blank">Mentions Légales</a>
     </div>
     
 </body>
