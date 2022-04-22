@@ -104,12 +104,10 @@ if(isset($_POST['submit'])){
                     $browser = $detect_browser->detect_browser();
                     if(isset($data_verif['navigateur']) == $browser){
                         $details = file_get_contents("https://ipinfo.io/".$_SERVER['REMOTE_ADDR']."?token=e9eb8ad2a16715");
-                        print_r("https://ipinfo.io/".$_SERVER['REMOTE_ADDR']."?token=e9eb8ad2a16715");
                         $json = json_decode($details);
                         $country = $json->country;
                         
                         if($country == "FR"){
-                            echo " FR" ;
                             $_SESSION['pseudo'] = $data_verif['pseudo'];  
                             header("Location: " . 'A2F/index.php', true, 301);
                         }else{
