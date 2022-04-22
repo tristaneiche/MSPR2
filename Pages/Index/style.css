@@ -3,6 +3,17 @@ body{background: #76b852; /* fallback for old browsers */
     background: linear-gradient(90deg, rgba(141,194,111,1) 0%, rgba(118,184,82,1) 50%);
     font-family: "Roboto", sans-serif;
 }
+.ip{
+  position: relative;
+  z-index: 1;
+  background: #FFFFFF;
+  max-width: 250px;
+  margin: 0 auto 100px;
+  padding: 45px;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+  margin-top: -34%;
+  margin-right: 0;
+}
 .form {
     position: relative;
     z-index: 1;

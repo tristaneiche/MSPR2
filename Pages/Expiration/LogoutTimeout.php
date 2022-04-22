@@ -2,7 +2,7 @@
 
 class LogoutTimeout{
     function sessionLogout(){ 
-        $logLength = 1200;
+        $logLength = 30;
         $ctime = strtotime("now");
         if(!isset($_SESSION['sessionLogout'])){
             $_SESSION['sessionLogout'] = $ctime;  

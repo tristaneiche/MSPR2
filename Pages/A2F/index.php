@@ -1,27 +1,14 @@
 <?php 
 session_start();
     require_once __DIR__.'/vendor/autoload.php';
-
     use OTPHP\TOTP;
-
     // ex : BXCYJI72M2PSUJ3KZL2VQKDYLXVK6J4Y5RV2MUG7D2N5QIDR4ERBSMDIPNVHKD2A6VT6LGNNR2Z6VFIFKM3UNVPTOFYSBMFD3R22OWI
     $otp = TOTP::create('BXCYJI72M2PSUJ3KZL2VQKDYLXVK6J4Y5RV2MUG7D2N5QIDR4ERBSMDIPNVHKD2A6VT6LGNNR2Z6VFIFKM3UNVPTOFYSBMFD3R22OWI');
-   
     $otp->setLabel('LE_CHATELET');
     $chl = $otp->getProvisioningUri();
-
     $mysqli = mysqli_connect("localhost", "lechatelet", "dove", "Users");
-
-    if ($mysqli) {
-      echo "ok";
-    }else{
-      echo "tg";
-    }
-
     $verifications = mysqli_query($mysqli,'SELECT a2f FROM user WHERE pseudo = \''.mysqli_real_escape_string($mysqli, $_SESSION['pseudo']).'\' ');
           $data_verif = mysqli_fetch_assoc($verifications);
-
-    echo " " . $data_verif['a2f'];
     if($data_verif['a2f'] == 0){
       $link = "https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=".$chl;
       mysqli_query($mysqli, "UPDATE user SET a2f = '1' WHERE pseudo = '". $_SESSION['pseudo']. "'");
@@ -30,7 +17,11 @@ session_start();
     }elseif($data_verif['a2f'] == 1){
       echo "";
     }else{
-      echo "Erreur avec la double authentification";
+      ?>
+        <div class="alert alert-danger">
+          Problème d'authentification ...
+        </div>
+      <?php 
     }
 
 ?>
