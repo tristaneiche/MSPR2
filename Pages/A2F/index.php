@@ -20,7 +20,7 @@ session_start();
     if($data_verif['a2f'] == 0){
       $link = "https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=".$chl;
       mysqli_query($mysqli, 'UPDATE Users SET a2f = "1" WHERE pseudo = \''.mysqli_real_escape_string($mysqli, $_SESSION['pseudo']).'\' ');
-      mysqli_query($mysqli, 'UPDATE Users SET a2f = "1" WHERE pseudo = ' $_SESSION['pseudo']' ');
+      mysqli_query($mysqli, 'UPDATE Users SET a2f = "1" WHERE pseudo = ' $_SESSION['pseudo'].'\' ');
 
       $data_verif['a2f'];
     }elseif($data_verif['a2f'] == 1){
