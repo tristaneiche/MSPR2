@@ -10,9 +10,12 @@ session_start();
     $otp->setLabel('LE_CHATELET');
     $chl = $otp->getProvisioningUri();
 
+    require_once('../connexion.php');
+    $ar = new connexion();
+    $ars = $ar->php();
 
     $mysqli = mysqli_connect("localhost", "lechatelet", "dove", "Users");
-        $verifications = mysqli_query($mysqli,'SELECT * FROM user WHERE pseudo = \''.mysqli_real_escape_string($mysqli, $_SESSION['pseudo']).'\' ');
+    $verifications = mysqli_query($mysqli,'SELECT a2f FROM user WHERE pseudo = \''.mysqli_real_escape_string($mysqli, $_SESSION['pseudo']).'\' ');
           $data_verif = mysqli_fetch_assoc($verifications);
 
     if($data_verif['a2f'] == 0){

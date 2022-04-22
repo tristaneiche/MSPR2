@@ -21,12 +21,12 @@
           </form>
         <p class="message">Un problème? <a href="mailto:lechatelet52@gmail.com">Contactez l'administrateur</a></p>
     </div>
+    
 </body>
 </html>
 
 <?php
 session_start();
-$session_id = session_id();
 if(isset($_POST['submit'])){
     if(!empty($_POST['pseudo']) AND !empty($_POST['mdp'])){
             $ldap_host = "ldap://192.168.1.76";
@@ -103,7 +103,6 @@ if(isset($_POST['submit'])){
                     $browser = $detect_browser->detect_browser();
                     if(isset($data_verif['navigateur']) == $browser){
                         $details = file_get_contents("https://ipinfo.io/".$_SERVER['REMOTE_ADDR']."?token=e9eb8ad2a16715");
-                        var_dump($details);
                         print_r("https://ipinfo.io/".$_SERVER['REMOTE_ADDR']."?token=e9eb8ad2a16715");
                         $json = json_decode($details);
                         $country = $json->country;
