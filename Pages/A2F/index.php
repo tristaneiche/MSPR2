@@ -11,12 +11,18 @@ session_start();
     $chl = $otp->getProvisioningUri();
 
     $mysqli = mysqli_connect("localhost", "lechatelet", "dove", "Users");
+    echo $mysqli;
+
     $verifications = mysqli_query($mysqli,'SELECT a2f FROM user WHERE pseudo = \''.mysqli_real_escape_string($mysqli, $_SESSION['pseudo']).'\' ');
           $data_verif = mysqli_fetch_assoc($verifications);
 
+    echo " " . $data_verif['a2f']
     if($data_verif['a2f'] == 0){
       $link = "https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=".$chl;
       mysqli_query($mysqli, 'UPDATE Users SET a2f = "1" WHERE pseudo = \''.mysqli_real_escape_string($mysqli, $_SESSION['pseudo']).'\' ');
+      mysqli_query($mysqli, 'UPDATE Users SET a2f = "1" WHERE pseudo = ' $_SESSION['pseudo']' ');
+
+      $data_verif['a2f'];
     }elseif($data_verif['a2f'] == 1){
       echo "";
     }else{
