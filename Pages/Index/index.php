@@ -35,6 +35,16 @@ if(isset($_POST['retour'])){
     require_once('../Expiration/LogoutTimeout.php');
     $logout_timeout = new LogoutTimeout();
     $logout_timeout->sessionLogout();
+
+    $details = file_get_contents("https://ipinfo.io/".$_SERVER['REMOTE_ADDR']."?token=e9eb8ad2a16715");
+    $json = json_decode($details);
+
+    $ip = $json->ip;
+    $city = $json->city;
+    $postal = $json->postal;
+    $region = $json->region;
+    $country = $json->country;
+    $timezone = $json->timezone;
 }
 ?>
     </div>
